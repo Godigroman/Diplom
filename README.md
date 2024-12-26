@@ -296,14 +296,834 @@ ssh -J bastion@51.250.19.231 admin@web1.ru-central1.internal
 
 ---
 
+# Ansible
+
+inventory
+
+```
+[Sites_group]
+web1.ru-central1.internal ansible_user=admin
+web2.ru-central1.internal ansible_user=admin
+[Zabbix_group]
+zabbix.ru-central1.internal ansible_user=admin
+[ELK_group]
+elasticsearch.ru-central1.internal ansible_user=admin
+[Kibana_group]
+kibana.ru-central1.internal ansible_user=admin
+```
+
+playbook.yml
+
+```
+---
+
+- name: configurate frontend servers
+  hosts: Sites_group
+  become: yes
+  vars:
+    beats_gpg: 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
+
+  tasks:
+  - name: update apt 
+    apt:
+      update_cache: yes
+      upgrade: yes
+  - name: search and istall nginx
+    apt:
+      name: nginx
+      state: present
+  - name: start application
+    systemd: 
+      name: nginx
+      state: started
+  - name: add nginx to autoload
+    systemd: 
+      name: nginx
+      enabled: yes
+  
+
+  - name: install gnupg
+    apt:
+      name: gnupg
+      state: present
+  - name: install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: present
+  - name: get GPG
+    ansible.builtin.shell:
+      cmd: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/elastic-7.x.gpg --import
+  - name: add gpg
+    ansible.builtin.shell:
+      cmd: sudo chmod 644 /etc/apt/trusted.gpg.d/elastic-7.x.gpg
+  - name: Add Beats apt repository.
+    ansible.builtin.shell:
+      cmd: echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/7/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+  - name: update apt 
+    apt:
+      update_cache: yes 
+  - name: install filebeat
+    apt:
+      name: filebeat
+      state: present
+  - name: add filebeat to autoload
+    systemd: 
+      name: filebeat
+      enabled: yes
+
+- name: installing zabbix agent 
+  hosts: Sites_group
+  become: yes
+  tasks:
+  - name: search and istall zabbix-agent
+    apt:
+      name: zabbix-agent
+      state: present
+  - name: start application
+    systemd: 
+      name: zabbix-agent
+      state: started
+  - name: add to autoload
+    systemd: 
+      name: zabbix-agent
+      enabled: yes
+
+- name: configurate zabbix server 
+  hosts: Zabbix_group
+  become: yes
+  vars:
+    get_zabbix_pkg: 'https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu22.04_all.deb'
+    zabbix_pkg: 'zabbix-release_7.0-2+ubuntu22.04_all.deb'
+  tasks:
+
+  - name: update apt 
+    apt:
+      update_cache: yes
+      upgrade: yes
+
+  - name: search and istall postgresql
+    apt:
+      name: postgresql
+      state: present
+  - name: start application
+    systemd: 
+      name: postgresql
+      state: started
+  - name: add to autoload
+    systemd: 
+      name: postgresql
+      enabled: yes
+
+  - name: getting zabbix pkg
+    ansible.builtin.shell:
+      cmd: wget "{{ get_zabbix_pkg }}"
+  - name: building zabbix pkg
+    ansible.builtin.shell:
+      cmd: dpkg -i "{{ zabbix_pkg }}"
 
 
+  - name: update apt 
+    apt:
+      update_cache: yes
 
+  - name: downloading zabbix-server-pgsql
+    apt:
+      name: zabbix-server-pgsql
+      state: present
 
+  - name: downloading zabbix-frontend-php
+    apt:
+      name: zabbix-frontend-php
+      state: present
 
+  - name: downloading php8.1-pgsql
+    apt:
+      name: php8.1-pgsql
+      state: present
 
+  - name: downloading zabbix-apache-conf
+    apt:
+      name: zabbix-apache-conf
+      state: present
 
+  - name: downloading zabbix-sql-scripts
+    apt:
+      name: zabbix-sql-scripts
+      state: present
 
+  - name: downloading zabbix-agent
+    apt:
+      name: zabbix-agent
+      state: present
+
+- name: configurate elk machine
+  hosts: ELK_group
+  become: yes
+  vars:
+    beats_gpg: 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
+
+  tasks:
+
+  - name: update apt 
+    apt:
+      update_cache: yes
+      upgrade: yes
+  - name: install gnupg
+    apt:
+      name: gnupg
+      state: present
+  - name: install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: present
+  - name: get GPG
+    ansible.builtin.shell:
+      cmd: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/elastic-7.x.gpg --import
+  - name: add gpg
+    ansible.builtin.shell:
+      cmd: sudo chmod 644 /etc/apt/trusted.gpg.d/elastic-7.x.gpg
+  - name: Add elk apt repository.
+    ansible.builtin.shell:
+      cmd: echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/7/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+  - name: update apt 
+    apt:
+      update_cache: yes 
+  - name: install elasticsearch
+    apt:
+      name: elasticsearch
+      state: present
+  - name: update systemd configs
+    ansible.builtin.shell:
+      cmd: systemctl daemon-reload
+  - name: enable unit
+    ansible.builtin.shell:
+      cmd: systemctl enable elasticsearch.service
+  - name: start unit
+    ansible.builtin.shell:
+      cmd: systemctl start elasticsearch.service
+
+- name: configurate kibana machine
+  hosts: Kibana_group
+  become: yes
+  vars:
+    beats_gpg: 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
+
+  tasks:
+
+  - name: update apt 
+    apt:
+      update_cache: yes
+      upgrade: yes
+  - name: install gnupg
+    apt:
+      name: gnupg
+      state: present
+  - name: install apt-transport-https
+    apt:
+      name: apt-transport-https
+      state: present
+  - name: get GPG
+    ansible.builtin.shell:
+      cmd: wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/elastic-7.x.gpg --import
+  - name: add gpg
+    ansible.builtin.shell:
+      cmd: sudo chmod 644 /etc/apt/trusted.gpg.d/elastic-7.x.gpg
+  - name: Add Beats apt repository.
+    ansible.builtin.shell:
+      cmd: echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/7/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+  - name: update apt 
+    apt:
+      update_cache: yes 
+  - name: update apt 
+    apt:
+      update_cache: yes
+      upgrade: yes
+  - name: install kibana
+    apt:
+      name: kibana
+      state: present
+  - name: update systemd configs
+    ansible.builtin.shell:
+      cmd: systemctl daemon-reload
+  - name: enable unit
+    ansible.builtin.shell:
+      cmd: systemctl enable kibana.service
+  - name: start unit
+    ansible.builtin.shell:
+      cmd: systemctl start kibana.service
+```
+
+---
+
+# Terraform
+
+Config.tpl
+
+```
+#cloud-config
+users:
+  - name: "${VM_USER}"
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - "${SSH_KEY}"
+```
+
+vm-autoscale.auto.tfvars
+
+```
+folder_id = "b1gkf03i5onh972se4a6"
+vm_user   = "admin"
+ssh_key   = "<содержимое_публичного_SSH-ключа>"
+```
+
+vm-autoscale.tf
+
+```
+# Объявление переменных для конфиденциальных параметров
+
+variable "folder_id" {
+  type = string
+}
+
+variable "vm_user" {
+  type = string
+}
+
+variable "ssh_key" {
+  type      = string
+  sensitive = true
+}
+
+# Настройка провайдера
+
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+      version = ">= 0.47.0"
+    }
+  }
+}
+
+provider "yandex" {
+  zone = "ru-central1-a"
+}
+
+# Создание сервисного аккаунта и назначение ему ролей
+
+resource "yandex_iam_service_account" "for-vm" {
+  name = "user"
+}
+
+resource "yandex_resourcemanager_folder_iam_member" "user" {
+  folder_id = var.folder_id
+  role      = "editor"
+  member    = "serviceAccount:${yandex_iam_service_account.for-vm.id}"
+}
+
+# Создание облачной сети и подсетей
+
+resource "yandex_vpc_network" "default" {
+  name = "edfault"
+}
+
+resource "yandex_vpc_subnet" "private-net-a" {
+  name           = "private-net-a"
+  zone           = "ru-central1-a"
+  v4_cidr_blocks = ["10.121.0.0/24"]
+  network_id     = yandex_vpc_network.default.id
+}
+
+resource "yandex_vpc_subnet" "private-net-b" {
+  name           = "private-net-b"
+  zone           = "ru-central1-b"
+  v4_cidr_blocks = ["10.120.0.0/24"]
+  network_id     = yandex_vpc_network.default.id
+}
+
+resource "yandex_vpc_subnet" "public-net-b" {
+  name           = "public-net-b"
+  zone           = "ru-central1-b"
+  v4_cidr_blocks = ["10.122.0.0/24"]
+  network_id     = yandex_vpc_network.default.id
+}
+
+# Создание группы безопасности
+
+resource "yandex_vpc_security_group" "zbx" {
+  name                = "zabbix"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "postgre"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+    port              = 5432
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "zabbix"
+    predefined_target = ["0.0.0.0/0"]
+    port              = 10050-10051
+  }
+  ingress {
+    protocol          = "Any"
+    predefined_target = ["0.0.0.0/0"]
+    port              = 443
+  }
+  ingress {
+    protocol          = "UDP"
+    predefined_target = ["0.0.0.0/0"]
+    port              = 162
+  }
+  ingress {
+    protocol          = "UDP"
+    predefined_target = ["0.0.0.0/0"]
+    port              = 53
+  }
+  ingress {
+    protocol          = "UDP"
+    predefined_target = ["0.0.0.0/0"]
+    port              = 123
+  }
+}
+
+resource "yandex_vpc_security_group" "slf" {
+  name                = "self"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "intern"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_vpc_security_group" "ssh" {
+  name                = "ssh"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "for_ssh_traffic"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+    port              = 22
+  }
+}
+
+resource "yandex_vpc_security_group" "kbn" {
+  name                = "kibana"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "kibana"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+    port              = 5601
+  }
+}
+
+resource "yandex_vpc_security_group" "http" {
+  name                = "http"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "for_http_traffic"
+    v4_cidr_blocks    = ["10.120.0.0/24", "10.121.0.0/24", "10.122.0.0/24"]
+    port              = 80
+  }
+}
+
+resource "yandex_vpc_security_group" "wb" {
+  name                = "for-web"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "zabbix"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+    port              = 10050
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "systemd"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+    port              = 53
+  }
+}
+
+resource "yandex_vpc_security_group" "els" {
+  name                = "elasticsearch"
+  network_id          = yandex_vpc_network.default.id
+  egress {
+    protocol          = "ANY"
+    description       = "any"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+  }
+  ingress {
+    protocol          = "Any"
+    description       = "elastic"
+    v4_cidr_blocks    = ["0.0.0.0/0"]
+    port              = 9200-9210
+  }
+}
+
+# Создание ВМ
+
+resource "yandex_compute_instance" "web1" {
+  name                = "web1"
+  folder_id           = var.folder_id
+  service_account_id  = yandex_iam_service_account.user.id
+ 
+  resources {
+    memory = 2
+    cores  = 2
+  }
+  
+  boot_disk {
+    mode = "READ_WRITE"
+    initialize_params {
+      image_id = "fd87kbts7j40q5b9rpjr"
+    }
+  }
+
+  network_interface {
+    network_id = yandex_vpc_network.default.id
+    subnet_ids = [
+      yandex_vpc_subnet.private-net-b.id
+    ]
+    security_group_ids = [ yandex_vpc_security_group.slf.id, yandex_vpc_security_group.ssh.id, yandex_vpc_security_group.http.id, yandex_vpc_security_group.wb.id ]
+  }
+
+  metadata = {
+    user-data = templatefile("config.tpl", {
+      VM_USER = var.vm_user
+      SSH_KEY = var.ssh_key
+    })
+  }
+
+}
+
+resource "yandex_compute_instance" "kibana" {
+  name                = "kibana"
+  folder_id           = var.folder_id
+  service_account_id  = yandex_iam_service_account.user.id
+ 
+  resources {
+    memory = 2
+    cores  = 2
+  }
+  
+  boot_disk {
+    mode = "READ_WRITE"
+    initialize_params {
+      image_id = "fd87kbts7j40q5b9rpjr"
+    }
+  }
+
+  network_interface {
+    network_id = yandex_vpc_network.default.id
+    subnet_ids = [
+      yandex_vpc_subnet.public-net-b.id
+    ]
+    security_group_ids = [ yandex_vpc_security_group.slf.id, yandex_vpc_security_group.ssh.id, yandex_vpc_security_group.kbn.id ]
+  }
+
+  metadata = {
+    user-data = templatefile("config.tpl", {
+      VM_USER = var.vm_user
+      SSH_KEY = var.ssh_key
+    })
+  }
+
+}
+
+resource "yandex_compute_instance" "zabbix" {
+  name                = "zabbix"
+  folder_id           = var.folder_id
+  service_account_id  = yandex_iam_service_account.user.id
+ 
+  resources {
+    memory = 2
+    cores  = 2
+  }
+  
+  boot_disk {
+    mode = "READ_WRITE"
+    initialize_params {
+      image_id = "fd87kbts7j40q5b9rpjr"
+    }
+  }
+
+  network_interface {
+    network_id = yandex_vpc_network.default.id
+    subnet_ids = [
+      yandex_vpc_subnet.public-net-b.id
+    ]
+    security_group_ids = [ yandex_vpc_security_group.slf.id, yandex_vpc_security_group.ssh.id, yandex_vpc_security_group.http.id, yandex_vpc_security_group.zbx.id ]
+  }
+
+  metadata = {
+    user-data = templatefile("config.tpl", {
+      VM_USER = var.vm_user
+      SSH_KEY = var.ssh_key
+    })
+  }
+
+}
+
+resource "yandex_compute_instance" "bastion-host" {
+  name                = "bastion-host"
+  folder_id           = var.folder_id
+  service_account_id  = yandex_iam_service_account.user.id
+ 
+  resources {
+    memory = 2
+    cores  = 2
+  }
+  
+  boot_disk {
+    mode = "READ_WRITE"
+    initialize_params {
+      image_id = "fd83omuuv0kssd0g5qt5"
+    }
+  }
+
+  network_interface {
+    network_id = yandex_vpc_network.default.id
+    subnet_ids = [
+      yandex_vpc_subnet.public-net-b.id
+    ]
+    security_group_ids = [ yandex_vpc_security_group.slf.id, yandex_vpc_security_group.ssh.id ]
+  }
+
+  metadata = {
+    user-data = templatefile("config.tpl", {
+      VM_USER = var.vm_user
+      SSH_KEY = var.ssh_key
+    })
+  }
+
+}
+
+resource "yandex_compute_instance" "elasticsearch" {
+  name                = "elasticsearch"
+  folder_id           = var.folder_id
+  service_account_id  = yandex_iam_service_account.user.id
+ 
+  resources {
+    memory = 2
+    cores  = 2
+  }
+  
+  boot_disk {
+    mode = "READ_WRITE"
+    initialize_params {
+      image_id = "fd87kbts7j40q5b9rpjr"
+    }
+  }
+
+  network_interface {
+    network_id = yandex_vpc_network.default.id
+    subnet_ids = [
+      yandex_vpc_subnet.private-net-b.id
+    ]
+    security_group_ids = [ yandex_vpc_security_group.slf.id, yandex_vpc_security_group.ssh.id, yandex_vpc_security_group.els.id ]
+  }
+
+  metadata = {
+    user-data = templatefile("config.tpl", {
+      VM_USER = var.vm_user
+      SSH_KEY = var.ssh_key
+    })
+  }
+
+}
+
+resource "yandex_compute_instance" "web2" {
+  name                = "web2"
+  folder_id           = var.folder_id
+  service_account_id  = yandex_iam_service_account.user.id
+ 
+  resources {
+    memory = 2
+    cores  = 2
+  }
+  
+  boot_disk {
+    mode = "READ_WRITE"
+    initialize_params {
+      image_id = "fd87kbts7j40q5b9rpjr"
+    }
+  }
+
+  network_interface {
+    network_id = yandex_vpc_network.default.id
+    subnet_ids = [
+      yandex_vpc_subnet.private-net-a.id
+    ]
+    security_group_ids = [ yandex_vpc_security_group.slf.id, yandex_vpc_security_group.ssh.id, yandex_vpc_security_group.http.id, yandex_vpc_security_group.wb.id ]
+  }
+
+  metadata = {
+    user-data = templatefile("config.tpl", {
+      VM_USER = var.vm_user
+      SSH_KEY = var.ssh_key
+    })
+  }
+
+}
+
+# Создание целевой группы
+
+resource "yandex_alb_target_group" "web-servers" {
+  name           = "web-servers"
+
+  target {
+    subnet_id    = "yandex_vpc_subnet.private-net-a.id"
+    ip_address   = "10.121.0.30"
+  }
+
+  target {
+    subnet_id    = "yandex_vpc_subnet.private-net-b.id"
+    ip_address   = "10.120.0.17"
+  }
+
+}
+# Создание группы бэкендов
+
+resource "yandex_alb_backend_group" "frontend" {
+  name                     = "frontend"
+ 
+  http_backend {
+    name                   = "web1"
+    weight                 = 1
+    port                   = 80
+    target_group_ids       = ["web-servers"]
+    load_balancing_config {
+      panic_threshold      = 90
+    }
+    enable_proxy_protocol  = true
+  }
+}
+
+# Cоздание HTTP роутера
+
+resource "yandex_alb_http_router" "for-web" {
+  name          = "for-web"
+}
+
+resource "yandex_alb_virtual_host" "main" {
+  name                    = "main"
+  http_router_id          = yandex_alb_http_router.for-web.id
+  route {
+    name                  = "way-to-webserv"
+    http_route {
+      http_route_action {
+        backend_group_id  = "yandex_alb_backend_group.frontend"
+        timeout           = "60s"
+      }
+    }
+  }
+}
+
+# Создание сетевого балансировщика
+
+resource "yandex_lb_network_load_balancer" "balancer" {
+  name = "frontend-webs"
+
+  listener {
+    name        = "http"
+    port        = 80
+    target_port = 80
+  }
+
+  attached_target_group {
+    target_group_id = yandex_compute_instance_group.autoscale-group.load_balancer[0].target_group_id
+    healthcheck {
+      name = "tcp"
+      tcp_options {
+        port = 80
+      }
+    }
+  }
+}
+
+# Создать политику
+
+resource "yandex_backup_policy" "daily_backup-life_time_week" {
+    compression                       = "NORMAL"
+    fast_backup_enabled               = true
+    format                            = "AUTO"
+    multi_volume_snapshotting_enabled = true
+    name                              = "daily_backup-life_time_week"
+    performance_window_enabled        = true
+    silent_mode_enabled               = true
+    splitting_bytes                   = "9223372036854775807"
+
+    reattempts {
+        enabled      = true
+        interval     = "1m"
+        max_attempts = 10
+    }
+
+    retention {
+        after_backup = false
+
+        rules {
+            max_age       = "7d"
+            repeat_period = []
+        }
+    }
+
+    scheduling {
+        enabled              = false
+        max_parallel_backups = 0
+        random_max_delay     = "30m"
+        scheme               = "ALWAYS_INCREMENTAL"
+
+        execute_by_interval {
+            repeat_at                 = ["04:10"]
+            type                      = "DAILY"
+        }
+    }
+
+    vm_snapshot_reattempts {
+        enabled      = true
+        interval     = "1m"
+        max_attempts = 10
+    }
+} 
+```
+
+---
 
 
 

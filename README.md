@@ -122,21 +122,21 @@ EnableGlobalScripts=0
 
 2. Страница с информацией о дисковых системах:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321826737277108257/image.png?ex=676ea694&is=676d5514&hm=9a91bfae64d7a420e3f1e443a34c6dfbc839cfff47b61c90962fabcc3f8904f3&)
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321826901370605629/image.png?ex=676ea6bb&is=676d553b&hm=8ffe5a30ea5fe1385f30e01796bcddc35b163f5a863ac25dc4490cb99ef4cecd&)
 
 3. Страница с информацией о сети:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827029871497247/image.png?ex=676ea6da&is=676d555a&hm=bd283e2b3451bbdc054773770fe23eaec779abb4e89c5bc4a4476c9568adf8c2&)
 
 4. Страница с информацией об ОЗУ:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827143700844666/image.png?ex=676ea6f5&is=676d5575&hm=a257c7ea6fa3ae150cfb595bb9046048e306aae637d282ac5a6c48fab95b1489&)
 
 5. Страница с информацией о ЦПУ:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827288337088522/image.png?ex=676ea717&is=676d5597&hm=5687b61fd9ce83aeb5839873ba2f3748899800951b4141b17049439df037d4e4&)
 
 ---
 
@@ -152,19 +152,19 @@ EnableGlobalScripts=0
 
 1. Создать шаблон считываемых индексов:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827468792954901/image.png?ex=676ea742&is=676d55c2&hm=42f07eb789d7bb41b958270abb90fdc83e5006bf4368a929508ece45b350b09a&)
 
 1.1 Под этот шаблон подпадают следующие индексы:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827584673316865/image.png?ex=676ea75e&is=676d55de&hm=240a16a9ed8247b8acf6a86fd59b46ad9538b0bdc068cc549067de8db63089cd&)
 
 2. Далее необходимо проанализировать какие поля присутствуют в логах:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827688188739666/image.png?ex=676ea777&is=676d55f7&hm=5ffe41fdd1fcd5b1b4788392915751f576037ac27c4bb6b40bb33c8a1c76a0d7&)
 
 3. На основании полей построить дашборд:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321827798868037643/image.png?ex=676ea791&is=676d5611&hm=16e0b000bc80b4341ac5cab0e085dd5ea5c12ede2647f38b8e40fab04a8a02ca&)
 
 В дашборде присутствует диаграмма, в которой показывается разделение логов по типу лога и по типу хоста. А также диаграмма кривой количества запросов к каждой машине ко времени.
 
@@ -210,13 +210,13 @@ logging.dest: /var/log/kibana/kibana.log
 
 Принципиальная схема взаимодействия хостов в сети:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828002610417715/image.png?ex=676ea7c2&is=676d5642&hm=393513b8cfae86bd7a0fa0e970117ea21f5bfbe2c19e057dd5c1da792eabac8c&)
 
 Хосты web1, web2, elasticsearch не имеют прямого доступа к внешней сети. Все общение происходит через сервера посредники - bastion (NAT gateway) и балансировщик. Для этого бы настроен gateway через bastion host и таблица маршрутизации:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828194185117787/image.png?ex=676ea7ef&is=676d566f&hm=87c07674dd012fc05d0872141b9e7a8407a51a905ffb3fec62bee7ad4148d41b&)
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828314926678027/image.png?ex=676ea80c&is=676d568c&hm=b5c2cb27071f9ce5b3d5e9d44b7a951c19778318ba47a7e6176fc9c387afaef8&)
 
 Подключение к хостам по ssh происходит через бастион в качестве jump сервера и используется fqdn имена виртуальных машин в зоне:
 
@@ -226,41 +226,41 @@ ssh -J bastion@51.250.19.231 admin@web1.ru-central1.internal
 
 Схема сети VPC в yandex cloud:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828460938924093/image.png?ex=676ea82f&is=676d56af&hm=4492fa52ed307fdf682b7942179cc95d7092e6b167f93a882ec53b1e37b3d509&)
 
 Подсети VPC в yandex cloud:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828590798770197/image.png?ex=676ea84e&is=676d56ce&hm=2f5a7592caa524ad20265bfa57dfada9851c70b49980018fc087df737a9db631&)
 
 Также были настроены различные группы безопасности предоставляющие доступ только к необходимым портам:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828704879378453/image.png?ex=676ea869&is=676d56e9&hm=1a26ccb4703bbda4e45793587e1990834b58de4762e6d04f359989f39965ba99&)
 
 Подробнее о каждой группе:
 
 1. Elastic
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828866364280874/image.png?ex=676ea890&is=676d5710&hm=5925dd1f0bed0d2bf3a25a997420183baec992c2a5d5aa3e8a39d5e338068cf9&)
 
 2. For_web
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321828993061748736/image.png?ex=676ea8ae&is=676d572e&hm=93094a82c0aaa9a6041fb0535c18e6c4dd3810e184adf8420dca6e75b00b69df&)
 
 3. http
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829144027463720/image.png?ex=676ea8d2&is=676d5752&hm=16f7d82f65319f7bedee59493de058de871e1d4042becf129ecf69a19bcd77c3&)
 
 4. kibana
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829277347610634/image.png?ex=676ea8f2&is=676d5772&hm=221cb62f18352a83464f90717e0ccbed30b07f279ea7674ad1017a7022cf4c35&)
 
 5. ssh
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829420364857385/image.png?ex=676ea914&is=676d5794&hm=0325e3f6789c074a511f99ba5cf774b18c2ef88c73cd5cbadec6aa1a5b1f47f9&)
 
 6. zabbix
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829543258095646/image.png?ex=676ea931&is=676d57b1&hm=d84bb2f8bc8962fbf6c4cac0643f1e4b2d382d0134f5b5cc90d1e12180b27bfd&)
 
 ---
 
@@ -270,11 +270,11 @@ ssh -J bastion@51.250.19.231 admin@web1.ru-central1.internal
 
 Была настроена политика бэкапов:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829672345931806/image.png?ex=676ea950&is=676d57d0&hm=534ab471a5ccf777d072ba166eaecd221557543947429039f0db3a6dd57bb999&)
 
 В качестве вида бэкапов выбраны инкрементные бэкапы. После этого все виртуальные машины были подкючены к этой политике резервного копирования, после чего был снят первый (полный) бэкап:
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829801937473577/image.png?ex=676ea96f&is=676d57ef&hm=603602abfca93cd940dcf03352031a71f5922c8bd85f9211345b594b51fc68e2&)
 
 ---
 
@@ -284,15 +284,15 @@ ssh -J bastion@51.250.19.231 admin@web1.ru-central1.internal
 
 Развертывание приложений происходило при помощи ansible, который был установлен на bastion host. Этот файл также лежит в этой ветке.
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321829959492177970/image.png?ex=676ea994&is=676d5814&hm=82818ce7b8c7b97255fb302099ac09c503e987400061fd80b8e0ca6705e4ed07&)
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321830090170175588/image.png?ex=676ea9b3&is=676d5833&hm=5b4951b9df2f531b511e9e1b10b2fb58993d73ed23c4fcd95e549b4249999121&)
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321830212950032405/image.png?ex=676ea9d1&is=676d5851&hm=0bce195f0c4fc64d01e1c038cc2b4775311807543ec2d5f12552acf0bf4d0065&)
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321830337478922332/image.png?ex=676ea9ee&is=676d586e&hm=a544824c8b930f8cff0d4cb3821ae73d18532dec05d0017271007bef45a8782b&)
 
-![]()
+![](https://cdn.discordapp.com/attachments/1306218954586591242/1321830486204616745/image.png?ex=676eaa12&is=676d5892&hm=577a615e12abf40ef53f161b235e3bfc486b2731eb7b42d2a622771fec76b80d&)
 
 ---
 

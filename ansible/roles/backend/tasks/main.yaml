@@ -1,0 +1,21 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+    
+- name: Start Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+    
+- name: Test page
+  copy:
+    content: "<html><head><title>Hello world!</title></head><body><h1>Test page</h1></body></html>"
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+  notify:
+  - Restart Nginx

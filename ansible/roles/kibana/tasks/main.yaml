@@ -1,0 +1,17 @@
+---
+- name: Install kibana
+  apt:
+    deb: "https://mirror.yandex.ru/mirrors/elastic/7/pool/main/k/kibana/kibana-{{ elk_version }}-amd64.deb"
+    #deb: https://mirror.yandex.ru/mirrors/elastic/7/pool/main/k/kibana/kibana-7.15.1-amd64.deb
+    #deb: "/tmp/kibana-{{ elk_version }}-amd64.deb"
+
+- name: Deploy kibana config
+  template:
+    src: config.j2
+    dest: /etc/kibana/kibana.yml
+
+- name: Start kibana
+  systemd:
+    name: kibana
+    enabled: true
+    state: restarted

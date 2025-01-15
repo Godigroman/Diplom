@@ -1,0 +1,16 @@
+---
+- name: Install elasticsearch
+  apt:
+    deb: "https://mirror.yandex.ru/mirrors/elastic/7/pool/main/e/elasticsearch/elasticsearch-{{ elk_version }}-amd64.deb"
+    #deb: "/tmp/elasticsearch-{{ elk_version }}-amd64.deb"
+
+- name: Deploy elasticsearch config
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+
+- name: Restart elastic
+  systemd:
+    name: elasticsearch
+    enabled: true
+    state: restarted

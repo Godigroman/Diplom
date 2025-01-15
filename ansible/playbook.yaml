@@ -1,0 +1,37 @@
+---
+- hosts: all
+  become: true
+  roles:
+  - common
+  tags:
+  - common
+
+- hosts: elastic
+  become: true
+  roles:
+  - elastic
+  tags:
+  - elastic
+
+- hosts: kibana
+  become: true
+  roles:
+  - kibana
+  tags:
+  - kibana
+
+- hosts: zabbix
+  become: true
+  roles:
+  - common
+  - zabbix
+  tags:
+  - zabbix
+
+- hosts: backend
+  become: true
+  roles:
+  - backend
+  - filebeat
+  tags:
+  - backend

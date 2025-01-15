@@ -1,0 +1,88 @@
+---
+- name: Install zabbix packages
+  ansible.builtin.apt:
+    name:
+      - zabbix-server-mysql
+      - zabbix-frontend-php
+      - zabbix-nginx-conf
+      - zabbix-sql-scripts
+    state: present
+    update_cache: yes 
+
+- name: Deploy nginx config
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/zabbix
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- name: Enable nginx config
+  file:
+    src: /etc/nginx/sites-available/zabbix
+    dest: /etc/nginx/sites-enabled/zabbix
+    owner: root
+    group: root
+    state: link
+
+- name: Install Mysql
+  apt:
+    name:
+      - mysql-server
+      - python3-mysqldb
+    state: present
+
+- name: Restart Mysql
+  systemd:
+    name: mysql
+    enabled: true
+    state: restarted
+
+- name: Create Mysql database
+  mysql_db:
+    name: zabbix
+    encoding: utf8mb4
+    collation: utf8mb4_bin
+    state: present
+
+- name: Add user in Mysql
+  mysql_user:
+    name: zabbix
+    password: "zabbix"
+    priv: "*.*:ALL,GRANT"
+    state: present
+
+- name: unpack
+  shell:
+    cmd: gunzip -k /usr/share/zabbix-sql-scripts/mysql/server.sql.gz
+  tags:
+  - never
+  - zabbix_init_db
+
+- name: import
+  mysql_db:
+    name: zabbix
+    state: import
+    target: /usr/share/zabbix-sql-scripts/mysql/server.sql
+  tags:
+  - never
+  - zabbix_init_db
+
+- name: Setting zabbix db
+  lineinfile:
+    path: /etc/zabbix/zabbix_server.conf
+    insertafter: "DBPassword="
+    line: DBPassword=zabbix
+
+- name: Restart nginx
+  systemd:
+    name: nginx
+    enabled: true
+    state: restarted
+
+- name: Start zabbix-server
+  systemd:
+    name: zabbix-server
+    enabled: true
+    state: started

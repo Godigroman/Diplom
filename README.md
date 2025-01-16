@@ -130,6 +130,12 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 
 ---
 
+Вход на ВМ выполнялся через Jump-Host
+
+Пример ```ssh -J user@51.250.36.142 user@zabbix.ru-central1.internal```
+
+---
+
 Asnible установка всех ролей
 
 ![](https://cdn.discordapp.com/attachments/1329330793885073499/1329397885892296797/image.png?ex=678a31c3&is=6788e043&hm=bf661c193320fb235eb9d7cb4e85bd969f336a15019b6e553fceb0b97b937530&)

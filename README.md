@@ -1,5 +1,5 @@
 
-#  Дипломная работа по профессии «Системный администратор»
+#  Дипломная работа по профессии «Системный администратор» Клименко Олега
 
 Содержание
 ==========
@@ -109,3 +109,89 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 1. Вопросы вида «Ничего не работает. Не запускается. Всё сломалось». Дипломный руководитель не сможет ответить на такой вопрос без дополнительных уточнений. Цените своё время и время других.
 2. Откладывание выполнения дипломной работы на последний момент.
 3. Ожидание моментального ответа на свой вопрос. Дипломные руководители — работающие инженеры, которые занимаются, кроме преподавания, своими проектами. Их время ограничено, поэтому постарайтесь задавать правильные вопросы, чтобы получать быстрые ответы :)
+
+---
+---
+# Выполнение
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329371307292233759/image.png?ex=678a1902&is=6788c782&hm=6c25a6ecf77acda175cfeb6f6737e400bcaff12c47784f452b513956107b9822&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329371791596064799/image.png?ex=678a1975&is=6788c7f5&hm=c6b6fe9527f1231c42d804c158b55adc04a7ee712cb7063395aab6fbb5d64250&)
+
+Подготавливаем ```terraform init```
+
+Смотрим ```terraform plan```
+
+Выполняем ```terraform apply --auto-approve```
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329372644503584899/image.png?ex=678a1a40&is=6788c8c0&hm=ad386d9d14ed64ee75df9bf1db9689c5f6e16d0b02ef16b0f5090a1cf7734b57&)
+
+
+Asnible установка всех ролей
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329397885892296797/image.png?ex=678a31c3&is=6788e043&hm=bf661c193320fb235eb9d7cb4e85bd969f336a15019b6e553fceb0b97b937530&)
+
+---
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329397298735878239/image.png?ex=678a3137&is=6788dfb7&hm=598ad7e566fc1100593bffcce870388144fec50ee7ed4582e2cf05956d53ac3c&)
+
+---
+
+Вывод логов вебинтерфейсе kibana
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329396961178026004/image.png?ex=678a30e6&is=6788df66&hm=580d166a703eb7bb14e96bf6665e8f7cddd47998f92af18e2d7f7cee137b1f3a&)
+
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329398728565723196/image.png?ex=678a328b&is=6788e10b&hm=e24428cc93e84ca4737455e7a87a5211282b4d1a96b4f1e85ed349f0186182eb&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329398969104597022/image.png?ex=678a32c5&is=6788e145&hm=073a9d6077516e7eeea82fa0af864505998bc41a215675f80ee03923000d6950&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329399303319584769/image.png?ex=678a3314&is=6788e194&hm=9c680b0cca4b03a54e904586f021f16455d1e3b43ab09b0d752e7e2e3c6a5cf2&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329399496790118472/image.png?ex=678a3343&is=6788e1c3&hm=4fa703ba401907d97e4900ff16b502dcbabf16dfe6049f028d7fb28df79d4a61&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329399673554997300/image.png?ex=678a336d&is=6788e1ed&hm=17a6722ccd5ca9fb6a72c5fb32564d87448619cf5ecb37655fbe3170b37a5be0&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329372644503584899/image.png?ex=678a1a40&is=6788c8c0&hm=ad386d9d14ed64ee75df9bf1db9689c5f6e16d0b02ef16b0f5090a1cf7734b57&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329399922398593106/image.png?ex=678a33a8&is=6788e228&hm=842f968ff1a0337dea7afde85bbe7ba5d33cf22368182380cd373b5ce99a651b&)
+
+![](https://cdn.discordapp.com/attachments/1329330793885073499/1329400414311022592/image.png?ex=678a341d&is=6788e29d&hm=ed2f2dbbe79982e7a5d6d5d9bf36ede73bd59997bbec74323382d0f9d0041294&)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

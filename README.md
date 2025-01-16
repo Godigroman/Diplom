@@ -1,5 +1,6 @@
 
-ssh-keyget -t rsa -o ~/.ssh/id_rsa_terraform
+ssh-keygen -t rsa -f ~/.ssh/id_rsa_terraform
+
 eval $(ssh-agent)
 ssh-add ~/.ssh/id_rsa_terraform
 

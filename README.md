@@ -196,7 +196,7 @@ Snapshots
 
 ---
 
-
+```terraform destroy```
 
 
 
